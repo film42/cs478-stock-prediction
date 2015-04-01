@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  label: MyString
+  prediction_for: 2015-03-31
+  price: 1.5
+
+two:
+  label: MyString
+  prediction_for: 2015-03-31
+  price: 1.5
