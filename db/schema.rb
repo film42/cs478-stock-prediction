@@ -11,11 +11,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150401051611) do
+ActiveRecord::Schema.define(version: 20150405184504) do
 
   create_table "stock_predictions", force: :cascade do |t|
     t.string   "label"
-    t.date     "prediction_for"
+    t.datetime "prediction_for"
     t.float    "price"
     t.datetime "created_at",     null: false
     t.datetime "updated_at",     null: false
@@ -24,6 +24,13 @@ ActiveRecord::Schema.define(version: 20150401051611) do
   create_table "stock_prices", force: :cascade do |t|
     t.string   "label"
     t.float    "price"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "quote_for"
+  end
+
+  create_table "stocks", force: :cascade do |t|
+    t.string   "label"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

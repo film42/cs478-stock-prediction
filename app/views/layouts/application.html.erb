@@ -4,11 +4,38 @@
   <title>Enron</title>
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
   <%= csrf_meta_tags %>
 </head>
 <body>
 
-<%= yield %>
+<nav class="navbar navbar-enron">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/">Enron</a>
+    </div>
+
+    <div class="collapse navbar-collapse">
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="/stocks">Stocks</a></li>
+        <li><a href="/">Predictions</a></li>
+        <li><a href="/sidekiq">Sidekiq</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="flash-messages">
+    <% flash.each do |name, msg| %>
+      <%= content_tag :div, msg, class: "alert alert-#{name}" %>
+    <% end %>
+  </div>
+</div>
+
+<div class="container">
+  <%= yield %>
+<div>
 
 </body>
 </html>

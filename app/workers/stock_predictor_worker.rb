@@ -1,21 +1,22 @@
 class StockPredictorWorker
-  include Sidekiq::Worker
+  include ::Sidekiq::Worker
 
   PATTERN_LENGTH = 11
+  DAYS_TO_PREDICT = 7
+  LOOK_BACK = 500 # Days
 
   def perform(stock_symbol)
     @stock_symbol = stock_symbol
+    logger.info "Predicting for stock symbol: #{stock_symbol}"
     ann = train_nueral_network
-    results = predict_n_days(5, ann)
+    results =  predict_n_days(DAYS_TO_PREDICT, ann)
 
     results.each_with_index do |price, index|
-      stock_prediction = ::StockPrediction.new(
-        :label         => stock_symbol,
-        :price         => price,
-        :prediction_for => (index + 1).days.from_now
-      )
+      prediction_date = (index + 1).days.from_now.midnight
+      prediction = ::StockPrediction.where(:label => stock_symbol,
+                                           :prediction_for => prediction_date).first_or_initialize
 
-      stock_prediction.save!
+      prediction.update_attributes!(:price => price)
     end
   end
 
@@ -24,21 +25,25 @@ class StockPredictorWorker
   attr_reader :stock_symbol
 
   def predict_n_days(n_days, ann)
-    n_days_predicitons = []
+    predicted_days = []
+    most_current_sequence = dataset.first
     (0...n_days).map do |day|
-      previous_n_days = dataset[day..(PATTERN_LENGTH - 1 - n_days_predicitons.size)]
-      next_row = previous_n_days + n_days_predicitons
-      output = n_days_predicitons.append(next_row)
-      n_days_predicitons.append(output)
+      feature_row = most_current_sequence.reverse.take(PATTERN_LENGTH - 1).reverse
+
+      logger.info "Running with feature row: #{feature_row.inspect}"
+
+      predicted_value = ann.run(feature_row).try(:first)
+      most_current_sequence.append(predicted_value)
+      predicted_days.append(predicted_value)
     end
 
-    n_days_predicitons
+    predicted_days
   end
 
   def dataset
     @dataset ||= begin
-      raw_data = StockPrice.where(:label => stock_symbol).limit(100).map(&:price)
-      (0...(raw_data.size - PATTERN_LENGTH)).map { |index| raw_data[0..PATTERN_LENGTH] }
+      raw_data = StockPrice.where(:label => stock_symbol).limit(LOOK_BACK).map(&:price)
+      (0...(raw_data.size - PATTERN_LENGTH)).map { |index| raw_data[0...PATTERN_LENGTH] }
     end
   end
 
@@ -60,10 +65,17 @@ class StockPredictorWorker
 
   def train_nueral_network
     inputs, outputs = training_data
+    feature_length = inputs.first.size
+
+    fail "No data to train with for symbol: #{stock_symbol}" if inputs.empty?
+
     train = ::RubyFann::TrainData.new(:inputs => inputs, :desired_outputs => outputs)
-    fann = ::RubyFann::Standard.new(:num_inputs => 10, :hidden_neurons => [80], :num_outputs => 1)
+    fann = ::RubyFann::Standard.new(:num_inputs => feature_length,
+                                    :hidden_neurons => [80],
+                                    :num_outputs => 1)
     fann.set_activation_function_hidden(:linear)
     fann.set_activation_function_output(:linear)
     fann.train_on_data(train, 5000, 100, 0.3)
+    fann
   end
 end

@@ -14,8 +14,12 @@ gem 'coffee-rails', '~> 4.1.0'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
 gem 'sidekiq'
+gem "sidekiq-cron", "~> 0.2.0"
 gem 'sinatra', :require => nil
 
+gem 'yahoo-finance', require: 'yahoo_finance'
+gem 'chartkick'
+gem 'groupdate'
 gem 'ruby-fann'
 
 # Use jquery as the JavaScript library

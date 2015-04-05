@@ -1,11 +1,11 @@
 require 'sidekiq/web'
 
 Rails.application.routes.draw do
+  resources :stocks
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
-  # You can have the root of your site routed with "root"
-  # root 'welcome#index'
+  root 'predictions#index'
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
@@ -17,6 +17,9 @@ Rails.application.routes.draw do
   #   resources :products
 
   resources :stocks
+  resources :predictions
+
+  post 'stocks/sync_and_predict/:label' => 'stocks#sync_and_predict', :as => :sync_and_predict
 
   # Example resource route with options:
   #   resources :products do
