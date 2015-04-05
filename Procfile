@@ -1,2 +1,2 @@
-web: bundle exec rails server -p $PORT
+web: bundle exec rails server -p $PORT --binding=0.0.0.0
 worker: bundle exec sidekiq -L log/sidekiq.log
