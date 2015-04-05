@@ -19,7 +19,6 @@ gem 'sinatra', :require => nil
 
 gem 'yahoo-finance', require: 'yahoo_finance'
 gem 'chartkick'
-gem 'groupdate'
 gem 'ruby-fann'
 
 # Use jquery as the JavaScript library
@@ -36,6 +35,7 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 
 # Use Puma as the app server
 gem 'puma'
+gem 'foreman'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
