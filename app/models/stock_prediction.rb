@@ -1,6 +1,9 @@
 class StockPrediction < ActiveRecord::Base
   def self.all_predictions
-    all_predictions = self.where('prediction_for >= ?', DateTime.now.midnight).all.group_by(&:label)
+    all_predictions = self.where('prediction_for >= ?', DateTime.now.midnight)
+      .all
+      .sort_by(&:label)
+      .group_by(&:label)
 
     all_predictions.inject({}) do |acc, (symbol, predictions)|
       acc[symbol] = build_chart(predictions)

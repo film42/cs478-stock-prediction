@@ -7,8 +7,8 @@ class StockPredictorWorker
 
   def perform(stock_symbol)
     # This is not good; We need a better queue
-    logger.info "Syncing stock symbol: #{stock.label}"
-    StockSyncWorker.new.perform(stock.label)
+    logger.info "Syncing stock symbol: #{stock_symbol}"
+    StockSyncWorker.new.perform(stock_symbol)
 
     @stock_symbol = stock_symbol
     logger.info "Predicting for stock symbol: #{stock_symbol}"
