@@ -63,7 +63,7 @@ class StocksController < ApplicationController
 
   def sync_and_predict
     label = params[:label]
-    ::KickoffWorker.perform_async(label)
+    ::StockPredictorWorker.perform_async(label)
 
     flash[:success] = "Syncing and Predicting for #{label}"
 
