@@ -6,6 +6,10 @@ class StockPredictorWorker
   LOOK_BACK = 500 # Days
 
   def perform(stock_symbol)
+    # This is not good; We need a better queue
+    logger.info "Syncing stock symbol: #{stock.label}"
+    StockSyncWorker.new.perform(stock.label)
+
     @stock_symbol = stock_symbol
     logger.info "Predicting for stock symbol: #{stock_symbol}"
     ann = train_nueral_network
