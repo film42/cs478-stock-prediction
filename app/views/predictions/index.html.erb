@@ -6,7 +6,7 @@
     predicted values are shown. These have been predicted by training a
     multilayer perceptron with the most recent 500 adjusted closing
     prices, with a single hidden layer of 80 nodes with a linear
-    activation function.
+    activation function. Each time point is in the format MM-DD.
 
     <a href="https://github.com/film42/cs478-stock-prediction">
       Source on Github</a>.</p>
@@ -15,6 +15,7 @@
 
   <% @predictions.each do |stock_symbol, predictions| %>
     <h4><%= stock_symbol %></h4>
+    <p>Error (MSE): <%= @training_accuracies[stock_symbol] %></p>
     <%= area_chart [
         {:name => "Historical", :data => @historical_quotes[stock_symbol] },
         {:name => "Predictions", :data => predictions }

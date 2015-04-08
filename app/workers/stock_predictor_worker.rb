@@ -13,6 +13,9 @@ class StockPredictorWorker
     @stock_symbol = stock_symbol
     logger.info "Predicting for stock symbol: #{stock_symbol}"
     ann, error = train_nueral_network
+
+    logger.info("New error for #{stock_symbol}: #{error}")
+
     results =  predict_n_days(DAYS_TO_PREDICT, ann)
 
     results.each_with_index do |price, index|
@@ -20,7 +23,7 @@ class StockPredictorWorker
       prediction = ::StockPrediction.where(:label => stock_symbol,
                                            :prediction_for => prediction_date).first_or_initialize
 
-      prediction.update_attributes!(:price => price, :training_accuracy => (1.0 - error))
+      prediction.update_attributes!(:price => price, :training_accuracy => error)
     end
   end
 
@@ -75,11 +78,11 @@ class StockPredictorWorker
 
     train = ::RubyFann::TrainData.new(:inputs => inputs, :desired_outputs => outputs)
     fann = ::RubyFann::Standard.new(:num_inputs => feature_length,
-                                    :hidden_neurons => [80],
+                                    :hidden_neurons => [200, 400],
                                     :num_outputs => 1)
     fann.set_activation_function_hidden(:linear)
     fann.set_activation_function_output(:linear)
-    fann.train_on_data(train, 5000, 100, 0.3)
+    fann.train_on_data(train, 15000, 100, 0.02)
     error = fann.train_epoch(train)
     [fann, error]
   end

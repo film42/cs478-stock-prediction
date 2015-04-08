@@ -1,11 +1,9 @@
 class StockPrice < ActiveRecord::Base
-  default_scope { order(:quote_for => :desc) }
-
   def self.last_2_weeks_chartable
-    price_points = self.where('quote_for >= ?', 14.days.ago).group_by(&:label)
+    price_points = self.where('quote_for >= ?', 2.weeks.ago).group_by(&:label)
 
     price_points.inject({}) do |acc, (symbol, points)|
-      acc[symbol] = build_chart(points)
+      acc[symbol] = build_chart(points).sort_by { |v| v.first }
       acc
     end
   end
@@ -13,7 +11,7 @@ class StockPrice < ActiveRecord::Base
   private
 
   def self.build_chart(points)
-    dates = points.map(&:quote_for).map { |dt| dt.to_date.to_s(:short) }
+    dates = points.map(&:quote_for).map { |dt| dt.to_date.strftime("%m-%d") }
     prices = points.map(&:price)
     dates.zip(prices)
   end
