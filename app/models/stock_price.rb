@@ -1,4 +1,6 @@
 class StockPrice < ActiveRecord::Base
+  default_scope { order(:quote_for => :desc) }
+
   def self.last_2_weeks_chartable
     price_points = self.where('quote_for >= ?', 14.days.ago).group_by(&:label)
 

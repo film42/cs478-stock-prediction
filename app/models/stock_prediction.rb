@@ -1,4 +1,6 @@
 class StockPrediction < ActiveRecord::Base
+  default_scope { order(:prediction_for => :desc) }
+
   def self.all_predictions
     all_predictions = self.where('prediction_for >= ?', DateTime.now.midnight)
       .all
