@@ -11,14 +11,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150405184504) do
+ActiveRecord::Schema.define(version: 20150408040502) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
 
   create_table "stock_predictions", force: :cascade do |t|
     t.string   "label"
     t.datetime "prediction_for"
     t.float    "price"
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+    t.float    "training_accuracy"
   end
 
   create_table "stock_prices", force: :cascade do |t|

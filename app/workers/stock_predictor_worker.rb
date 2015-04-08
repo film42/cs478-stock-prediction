@@ -12,7 +12,7 @@ class StockPredictorWorker
 
     @stock_symbol = stock_symbol
     logger.info "Predicting for stock symbol: #{stock_symbol}"
-    ann = train_nueral_network
+    ann, error = train_nueral_network
     results =  predict_n_days(DAYS_TO_PREDICT, ann)
 
     results.each_with_index do |price, index|
@@ -20,7 +20,7 @@ class StockPredictorWorker
       prediction = ::StockPrediction.where(:label => stock_symbol,
                                            :prediction_for => prediction_date).first_or_initialize
 
-      prediction.update_attributes!(:price => price)
+      prediction.update_attributes!(:price => price, :training_accuracy => (1.0 - error))
     end
   end
 
@@ -80,6 +80,7 @@ class StockPredictorWorker
     fann.set_activation_function_hidden(:linear)
     fann.set_activation_function_output(:linear)
     fann.train_on_data(train, 5000, 100, 0.3)
-    fann
+    error = fann.train_epoch(train)
+    [fann, error]
   end
 end
