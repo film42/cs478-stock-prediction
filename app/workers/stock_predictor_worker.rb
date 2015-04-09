@@ -78,7 +78,7 @@ class StockPredictorWorker
 
     train = ::RubyFann::TrainData.new(:inputs => inputs, :desired_outputs => outputs)
     fann = ::RubyFann::Standard.new(:num_inputs => feature_length,
-                                    :hidden_neurons => [200, 400],
+                                    :hidden_neurons => [80],
                                     :num_outputs => 1)
     fann.set_activation_function_hidden(:linear)
     fann.set_activation_function_output(:linear)
