@@ -8,6 +8,15 @@ class StockPrice < ActiveRecord::Base
     end
   end
 
+  def self.last_4_weeks_chartable
+    price_points = self.where('quote_for >= ?', 4.weeks.ago).group_by(&:label)
+
+    price_points.inject({}) do |acc, (symbol, points)|
+      acc[symbol] = build_chart(points).sort_by { |v| v.first }
+      acc
+    end
+  end
+
   private
 
   def self.build_chart(points)

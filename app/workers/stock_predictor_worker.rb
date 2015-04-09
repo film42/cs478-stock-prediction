@@ -1,7 +1,7 @@
 class StockPredictorWorker
   include ::Sidekiq::Worker
 
-  PATTERN_LENGTH = 11
+  PATTERN_LENGTH = 4 + 1 # Days + 1 for label
   DAYS_TO_PREDICT = 7
   LOOK_BACK = 500 # Days
 
@@ -19,7 +19,7 @@ class StockPredictorWorker
     results =  predict_n_days(DAYS_TO_PREDICT, ann)
 
     results.each_with_index do |price, index|
-      prediction_date = (index + 1).days.from_now.midnight
+      prediction_date = index.days.from_now.midnight
       prediction = ::StockPrediction.where(:label => stock_symbol,
                                            :prediction_for => prediction_date).first_or_initialize
 
@@ -78,11 +78,11 @@ class StockPredictorWorker
 
     train = ::RubyFann::TrainData.new(:inputs => inputs, :desired_outputs => outputs)
     fann = ::RubyFann::Standard.new(:num_inputs => feature_length,
-                                    :hidden_neurons => [80],
+                                    :hidden_neurons => [40],
                                     :num_outputs => 1)
-    fann.set_activation_function_hidden(:linear)
+    fann.set_activation_function_hidden(:sigmoid)
     fann.set_activation_function_output(:linear)
-    fann.train_on_data(train, 15000, 100, 0.02)
+    fann.train_on_data(train, 10000000, 100, 0.02)
     error = fann.train_epoch(train)
     [fann, error]
   end
