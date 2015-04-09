@@ -82,7 +82,7 @@ class StockPredictorWorker
                                     :num_outputs => 1)
     fann.set_activation_function_hidden(:sigmoid)
     fann.set_activation_function_output(:linear)
-    fann.train_on_data(train, 10000000, 100, 0.02)
+    fann.train_on_data(train, 100000, 100, 0.02)
     error = fann.train_epoch(train)
     [fann, error]
   end
