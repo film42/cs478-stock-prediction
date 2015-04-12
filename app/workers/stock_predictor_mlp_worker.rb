@@ -1,4 +1,4 @@
-class StockPredictorWorker
+class StockPredictorMlpWorker
   include ::Sidekiq::Worker
 
   PATTERN_LENGTH = 4 + 1 # Days + 1 for label
@@ -11,7 +11,7 @@ class StockPredictorWorker
     StockSyncWorker.new.perform(stock_symbol)
 
     @stock_symbol = stock_symbol
-    logger.info "Predicting for stock symbol: #{stock_symbol}"
+    logger.info "Predicting with MLP for stock symbol: #{stock_symbol}"
     ann, error = train_nueral_network
 
     logger.info("New error for #{stock_symbol}: #{error}")
@@ -21,6 +21,7 @@ class StockPredictorWorker
     results.each_with_index do |price, index|
       prediction_date = index.days.from_now.midnight
       prediction = ::StockPrediction.where(:label => stock_symbol,
+                                           :learned_with => :mlp,
                                            :prediction_for => prediction_date).first_or_initialize
 
       prediction.update_attributes!(:price => price, :training_accuracy => error)

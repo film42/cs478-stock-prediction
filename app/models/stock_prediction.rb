@@ -1,6 +1,7 @@
 class StockPrediction < ActiveRecord::Base
   def self.all_predictions
-    all_predictions = self.where('prediction_for >= ?', DateTime.now.midnight)
+    all_predictions = self.where('prediction_for >= ?', 30.days.ago)
+      .where(:learned_with => :mlp)
       .all
       .sort_by(&:label)
       .group_by(&:label)

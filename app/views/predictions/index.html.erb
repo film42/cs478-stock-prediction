@@ -2,7 +2,8 @@
 
   <h3>Stock Predictions</h3>
   <p>Each graph is displaying the last 30 days of adjusted closing price
-    for each of the stock symbols listed. Following those 30 quotes, 7
+    for each of the stock symbols listed and the historically
+    predicted value for that day. Following those 30 quotes, 7 new
     predicted values are shown. These have been predicted by training a
     multilayer perceptron with the most recent 500 adjusted closing
     prices, with a single hidden layer of 40 nodes with a linear
@@ -16,7 +17,7 @@
   <% @predictions.each do |stock_symbol, predictions| %>
     <h4><%= stock_symbol %></h4>
     <p>Error (MSE): <%= @training_accuracies[stock_symbol] %></p>
-    <%= area_chart [
+    <%= line_chart [
         {:name => "Historical", :data => @historical_quotes[stock_symbol] },
         {:name => "Predictions", :data => predictions }
       ], :discrete => true %>

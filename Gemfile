@@ -21,6 +21,7 @@ gem 'sinatra', :require => nil
 gem 'yahoo-finance', require: 'yahoo_finance'
 gem 'chartkick'
 gem 'ruby-fann'
+gem 'knn'
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
