@@ -7,7 +7,7 @@ class KickoffWorker
 
     stocks.each do |stock|
       logger.info "Kicking off stock sync / prediction worker for #{stock.label}"
-      ::StockPredictorWorker.perform_async(stock.label)
+      ::StockPredictorMlpWorker.perform_async(stock.label)
     end
   end
 end
