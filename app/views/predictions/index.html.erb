@@ -16,7 +16,7 @@
 
   <% @predictions.each do |stock_symbol, predictions| %>
     <h4><%= stock_symbol %></h4>
-    <p>Error (MSE): <%= @training_accuracies[stock_symbol] %></p>
+    <p>Error (RMSE): <%= @training_accuracies[stock_symbol] %></p>
     <%= line_chart [
         {:name => "Historical", :data => @historical_quotes[stock_symbol] },
         {:name => "Predictions", :data => predictions }

@@ -19,6 +19,7 @@ class StockPrediction < ActiveRecord::Base
 
     data_points.inject({}) do |acc, (label, models)|
       acc[label] = models.max_by(&:training_accuracy).training_accuracy
+      acc[label] = Math.sqrt(acc[label])
       acc
     end
   end
